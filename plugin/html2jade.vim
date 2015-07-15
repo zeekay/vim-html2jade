@@ -12,6 +12,10 @@ if !exists('g:html2jade_split_cmd')
     let g:html2jade_split_cmd = 'vnew'
 endif
 
+if !exists('g:html2jade_convert_bodyless')
+    let g:html2jade_convert_bodyless = 1
+endif
+
 function! s:Html2Jade(...)
     if !executable('html2jade')
         if executable('npm')
@@ -38,7 +42,11 @@ function! s:Html2Jade(...)
 
     normal Gdgg
     exe '0read '.file
-    silent exe '%!html2jade'
+    if eval('g:html2jade_convert_bodyless')
+      silent exe '%!html2jade --bodyless'
+    else
+      silent exe '%!html2jade'
+    endif
 endfunction
 
 au filetype html,xhtml,xml command! -buffer -nargs=? Html2Jade call s:Html2Jade(<f-args>)
